@@ -1,3 +1,5 @@
+<script setup>
+</script>
 <template>
   <div class="header">
     <span class="icon"></span>
@@ -7,11 +9,6 @@
     </router-link>
   </div>
 </template>
-<script>
-export default {
-  name: 'm-header'
-}
-</script>
 <style lang="scss" scoped>
   .header {
     height: 44px;

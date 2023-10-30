@@ -1,3 +1,23 @@
+<script setup>
+const tabs = [
+  {
+    name: '推荐',
+    path: '/recommend'
+  },
+  {
+    name: '歌手',
+    path: '/singer'
+  },
+  {
+    name: '排行',
+    path: '/top-list'
+  },
+  {
+    name: '搜索',
+    path: '/search'
+  }
+]
+</script>
 <template>
   <div class="tab">
     <router-link
@@ -10,34 +30,6 @@
     </router-link>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'm-tab',
-  data () {
-    return {
-      tabs: [
-        {
-          name: '推荐',
-          path: '/recommend'
-        },
-        {
-          name: '歌手',
-          path: '/singer'
-        },
-        {
-          name: '排行',
-          path: '/top-list'
-        },
-        {
-          name: '搜索',
-          path: '/search'
-        }
-      ]
-    }
-  }
-}
-</script>
 
 <style lang="scss" scoped>
   .tab {

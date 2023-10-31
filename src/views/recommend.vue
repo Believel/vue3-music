@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, onBeforeMount } from 'vue'
-import Slider from '@/components/slider/slider'
+import Slider from '@/components/base/slider/slider'
 import { getRecommend } from '@/service/recommend'
 
 const data = reactive({

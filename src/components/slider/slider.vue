@@ -1,30 +1,12 @@
 <script setup>
-import BScroll from '@better-scroll/core'
-import Slide from '@better-scroll/slide'
-import { onMounted, ref, defineProps } from 'vue'
-BScroll.use(Slide)
-const currentPageIndex = ref(0)
+import { defineProps, ref } from 'vue'
+import useSlider from './use-slider'
+
 const rootRef = ref(null)
 const props = defineProps({
   sliders: Array
 })
-onMounted(() => {
-  init()
-})
-
-function init () {
-  const slider = new BScroll(rootRef.value, {
-    scrollX: true,
-    scrollY: false,
-    slide: true,
-    momentum: false,
-    bounce: false,
-    probeType: 3
-  })
-  slider.on('slideWillChange', (page) => {
-    currentPageIndex.value = page.pageX
-  })
-}
+const { currentPageIndex } = useSlider(rootRef)
 </script>
 <template>
   <div class="slider" ref="rootRef">

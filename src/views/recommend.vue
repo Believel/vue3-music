@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onBeforeMount } from 'vue'
+import { reactive, onBeforeMount, computed, ref } from 'vue'
 import Slider from '@/components/base/slider/slider'
 import Scroll from '@/components/base/scroll/scroll'
 import { getRecommend } from '@/service/recommend'
@@ -9,6 +9,13 @@ const data = reactive({
   albums: []
 })
 
+const title = ref('加载文案自己设定')
+
+// 计算属性
+const loading = computed(() => {
+  return !data.sliders.length && !data.albums.length
+})
+
 onBeforeMount(async () => {
   const result = await getRecommend()
   data.sliders = result.sliders
@@ -16,7 +23,7 @@ onBeforeMount(async () => {
 })
 </script>
 <template>
-  <div class="recommend">
+  <div class="recommend" v-loading:[title]="loading">
     <Scroll class="recommend-content">
       <div>
         <div class="slider-wrapper">

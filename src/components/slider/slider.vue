@@ -31,8 +31,6 @@ const { currentPageIndex } = useSlider(rootRef)
   min-height: 1px;
   font-size: 0;
   touch-action: pan-y;
-  // TODO
-  position: relative;
   .slider-group {
     position: relative;
     overflow: hidden;

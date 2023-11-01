@@ -1,16 +1,18 @@
 <script setup>
 import { defineProps } from 'vue'
 import Scroll from '@/components/base/scroll/scroll'
+import useFixed from './use-fixed'
 
 const props = defineProps({
   singers: Array
 })
+const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props)
 </script>
 
 <template>
-  <Scroll class="index-list">
+  <Scroll class="index-list" :probe-type="3" @scroll="onScroll">
     <!-- 歌手列表 -->
-    <ul>
+    <ul ref="groupRef">
       <li
         v-for="group in props.singers"
         :key="group.title"
@@ -30,8 +32,8 @@ const props = defineProps({
       </li>
     </ul>
     <!-- 歌手列表左侧固定标题 -->
-    <div class="fixed">
-      <div class="fixed-title"> 11</div>
+    <div class="fixed" :style="fixedStyle" v-show="fixedTitle">
+      <div class="fixed-title"> {{ fixedTitle }}</div>
     </div>
   </Scroll>
 </template>

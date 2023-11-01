@@ -1,15 +1,22 @@
 <script setup>
 import useScroll from './use-scroll'
-import { defineProps, ref } from 'vue'
+import { defineProps, ref, defineEmits } from 'vue'
 
 const rootRef = ref(null)
 const props = defineProps({
   click: {
     type: Boolean,
     default: true
+  },
+  // 决定是否派发scroll事件
+  probeType: {
+    type: Number,
+    default: 0
   }
 })
-useScroll(rootRef, props)
+// 定义向父元素派发的事件
+const emit = defineEmits(['scroll'])
+useScroll(rootRef, props, emit)
 </script>
 
 <template>

@@ -35,6 +35,14 @@ const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props)
     <div class="fixed" :style="fixedStyle" v-show="fixedTitle">
       <div class="fixed-title"> {{ fixedTitle }}</div>
     </div>
+    <!-- 右侧快速导航 -->
+    <div class="shortcut">
+      <ul>
+        <li class="item">
+          热
+        </li>
+      </ul>
+    </div>
   </Scroll>
 </template>
 
@@ -83,6 +91,27 @@ const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props)
       font-size: $font-size-small;
       color: $color-text-l;
       background: $color-highlight-background;
+    }
+  }
+  .shortcut {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    padding: 20px 0;
+    border-radius: 10px;
+    text-align: center;
+    background: $color-background-d;
+    font-family: Helvetica;
+    .item {
+      padding: 3px;
+      line-height: 1;
+      color: $color-text-l;
+      font-size: $font-size-small;
+      &.current {
+        color: $color-theme;
+      }
     }
   }
 }

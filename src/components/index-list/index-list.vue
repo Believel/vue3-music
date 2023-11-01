@@ -2,15 +2,22 @@
 import { defineProps } from 'vue'
 import Scroll from '@/components/base/scroll/scroll'
 import useFixed from './use-fixed'
+import useShortcut from './use-shortcut'
 
 const props = defineProps({
   singers: Array
 })
-const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props)
+const { groupRef, onScroll, fixedTitle, fixedStyle, currentIndex } = useFixed(props)
+const { shortcutList, scrollRef, onShortcutTouchStart, onShortcutTouchMove } = useShortcut(props, groupRef)
 </script>
 
 <template>
-  <Scroll class="index-list" :probe-type="3" @scroll="onScroll">
+  <Scroll
+    class="index-list"
+    :probe-type="3"
+    @scroll="onScroll"
+    ref="scrollRef"
+  >
     <!-- 歌手列表 -->
     <ul ref="groupRef">
       <li
@@ -36,10 +43,21 @@ const { groupRef, onScroll, fixedTitle, fixedStyle } = useFixed(props)
       <div class="fixed-title"> {{ fixedTitle }}</div>
     </div>
     <!-- 右侧快速导航 -->
-    <div class="shortcut">
+    <div
+      class="shortcut"
+      @touchstart.stop.prevent="onShortcutTouchStart"
+      @touchmove.stop.prevent="onShortcutTouchMove"
+      @touchend.stop.prevent
+    >
       <ul>
-        <li class="item">
-          热
+        <li
+          class="item"
+          v-for="(item, index) in shortcutList"
+          :key="item"
+          :data-index="index"
+          :class="{'current': currentIndex === index}"
+        >
+          {{ item }}
         </li>
       </ul>
     </div>

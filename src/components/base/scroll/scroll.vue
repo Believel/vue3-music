@@ -1,6 +1,6 @@
 <script setup>
 import useScroll from './use-scroll'
-import { defineProps, ref, defineEmits } from 'vue'
+import { defineProps, ref, defineEmits, defineExpose } from 'vue'
 
 const rootRef = ref(null)
 const props = defineProps({
@@ -16,7 +16,11 @@ const props = defineProps({
 })
 // 定义向父元素派发的事件
 const emit = defineEmits(['scroll'])
-useScroll(rootRef, props, emit)
+const scroll = useScroll(rootRef, props, emit)
+// 对外暴露属性
+defineExpose({
+  scroll
+})
 </script>
 
 <template>

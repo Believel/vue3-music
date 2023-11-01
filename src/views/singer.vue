@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, onBeforeMount } from 'vue'
 import { getSingerList } from '@/service/singer'
+import IndexList from '@/components/index-list/index-list'
 
 const data = reactive({
   singers: []
@@ -12,7 +13,8 @@ onBeforeMount(async () => {
 </script>
 <template>
   <div class="singer" v-loading="!data.singers.length">
-    歌手页面
+    <IndexList :singers="data.singers">
+    </IndexList>
   </div>
 </template>
 

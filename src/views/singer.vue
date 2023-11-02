@@ -15,6 +15,7 @@ onBeforeMount(async () => {
   <div class="singer" v-loading="!data.singers.length">
     <IndexList :singers="data.singers">
     </IndexList>
+    <router-view></router-view>
   </div>
 </template>
 

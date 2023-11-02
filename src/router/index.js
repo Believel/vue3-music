@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Recommend from '@/views/recommend'
 import Singer from '@/views/singer'
+import SingerDetail from '@/views/singer-detail'
 import TopList from '@/views/top-list'
 import Search from '@/views/search'
 const routes = [
@@ -14,7 +15,13 @@ const routes = [
   },
   {
     path: '/singer',
-    component: Singer
+    component: Singer,
+    children: [
+      {
+        path: ':id',
+        component: SingerDetail
+      }
+    ]
   },
   {
     path: '/top-list',

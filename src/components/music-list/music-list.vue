@@ -4,6 +4,8 @@ import { useRouter } from 'vue-router'
 import Scroll from '@/components/base/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
 
+const RESERVED_HEIGHT = 40
+
 const props = defineProps({
   songs: {
     type: Array,
@@ -13,22 +15,48 @@ const props = defineProps({
   },
   data: Object
 })
-// const scrollY = ref(0)
+const scrollY = ref(0)
+const maxTranslateY = ref(0)
 // 背景图片高度
 const imageHeight = ref(0)
 const bgImage = ref(null)
 // 动态计算图片样式
 const bgImageStyle = computed(() => {
-  const zIndex = 0
-  const paddingTop = '70%'
-  const height = 0
+  // 滚动列表 Y 值
+  const scrollYVal = scrollY.value
+  const maxTranslateYVal = maxTranslateY.value
+  let zIndex = 0
+  let paddingTop = '70%'
+  let height = 0
   // const translateZ = 0
+  // 向上滚动 背景图片收起高度
+  if (scrollYVal > maxTranslateYVal) {
+    zIndex = 10
+    paddingTop = 0
+    height = `${RESERVED_HEIGHT}px`
+  }
+  let scale = 1
+  // 向下滚动
+  if (scrollYVal < 0) {
+    // 背景图片放大
+    scale = 1 + Math.abs(scrollYVal / imageHeight.value)
+  }
 
   return {
     zIndex,
     paddingTop,
     height,
-    backgroundImage: `url(${props.data.pic})`
+    backgroundImage: `url(${props.data.pic})`,
+    transform: `scale(${scale})`
+  }
+})
+const playBtnStyle = computed(() => {
+  let display = ''
+  if (scrollY.value >= maxTranslateY.value) {
+    display = 'none'
+  }
+  return {
+    display
   }
 })
 // 歌手列表样式
@@ -46,7 +74,11 @@ const goBack = () => {
 onMounted(() => {
   // 动态获取图片高度是为了方便设置下面列表的top值
   imageHeight.value = bgImage.value.clientHeight
+  maxTranslateY.value = imageHeight.value - RESERVED_HEIGHT
 })
+function onScroll (pos) {
+  scrollY.value = -pos.y
+}
 </script>
 <template>
   <div class="music-list">
@@ -55,7 +87,7 @@ onMounted(() => {
     </div>
     <h1 class="title">{{props.data.name}}</h1>
     <div class="bg-image" :style="bgImageStyle" ref="bgImage">
-      <div class="play-btn-wrapper">
+      <div class="play-btn-wrapper" :style="playBtnStyle">
         <div class="play-btn">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
@@ -64,7 +96,12 @@ onMounted(() => {
       <div class="filter"></div>
     </div>
     <!-- 歌单列表 -->
-    <Scroll class="list" :style="scrollStyle">
+    <Scroll
+      class="list"
+      :style="scrollStyle"
+      :probe-type="3"
+      @scroll="onScroll"
+    >
       <div class="song-list-wrapper">
         <SongList :songs="props.songs"></SongList>
       </div>

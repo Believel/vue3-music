@@ -1,21 +1,17 @@
 <script setup>
-import { defineProps } from 'vue'
-import { useRouter } from 'vue-router'
+import { defineProps, defineEmits } from 'vue'
 import Scroll from '@/components/base/scroll/scroll'
 import useFixed from './use-fixed'
 import useShortcut from './use-shortcut'
 
-const router = useRouter()
 const props = defineProps({
   singers: Array
 })
+const emit = defineEmits(['select'])
 const { groupRef, onScroll, fixedTitle, fixedStyle, currentIndex } = useFixed(props)
 const { shortcutList, scrollRef, onShortcutTouchStart, onShortcutTouchMove } = useShortcut(props, groupRef)
 const onItemClick = (item) => {
-  // 路由跳转歌手详情页
-  router.push({
-    path: `/singer/${item.mid}`
-  })
+  emit('select', item)
 }
 </script>
 

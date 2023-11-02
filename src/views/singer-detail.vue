@@ -1,10 +1,15 @@
 <script setup>
-import { onBeforeMount, reactive } from 'vue'
+import { onBeforeMount, reactive, defineProps } from 'vue'
 import { useRoute } from 'vue-router'
 import { getSingerDetail } from '@/service/singer'
 import { processSongs } from '@/service/song'
+import MusicList from '@/components/music-list/music-list'
+
 const data = reactive({
   songs: []
+})
+const props = defineProps({
+  data: Object
 })
 onBeforeMount(async () => {
   const route = useRoute()
@@ -12,14 +17,13 @@ onBeforeMount(async () => {
     mid: route.params.id
   })
   data.songs = await processSongs(result.songs)
-  console.log(data.songs)
 })
 
 </script>
 
 <template>
   <div class="singer-detail">
-    歌手详情
+    <music-list :songs="data.songs" :data="props.data"></music-list>
   </div>
 </template>
 

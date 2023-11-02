@@ -1,13 +1,18 @@
 <script setup>
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, reactive } from 'vue'
+import { useRoute } from 'vue-router'
 import { getSingerDetail } from '@/service/singer'
-
+import { processSongs } from '@/service/song'
+const data = reactive({
+  songs: []
+})
 onBeforeMount(async () => {
+  const route = useRoute()
   const result = await getSingerDetail({
-    mid: '0025NhlN2yWrP4'
+    mid: route.params.id
   })
-
-  console.log(result)
+  data.songs = await processSongs(result.songs)
+  console.log(data.songs)
 })
 
 </script>

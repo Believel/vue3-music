@@ -67,6 +67,20 @@ const scrollStyle = computed(() => {
     bottom
   }
 })
+
+// 高斯模糊效果
+const filterStyle = computed(() => {
+  let blur = 0
+  const imageHeightVal = imageHeight.value
+  const scrollYVal = scrollY.value
+  // 向上滚动
+  if (scrollYVal >= 0) {
+    blur = Math.min(maxTranslateY.value / imageHeightVal, scrollYVal / imageHeightVal) * 20
+  }
+  return {
+    backdropFilter: `blur(${blur}px)`
+  }
+})
 const router = useRouter()
 const goBack = () => {
   router.back()
@@ -85,7 +99,7 @@ function onScroll (pos) {
     <div class="back" @click="goBack">
       <i class="icon-back"></i>
     </div>
-    <h1 class="title">{{props.data.name}}</h1>
+    <h1 class="title">{{data.name}}</h1>
     <div class="bg-image" :style="bgImageStyle" ref="bgImage">
       <div class="play-btn-wrapper" :style="playBtnStyle">
         <div class="play-btn">
@@ -93,7 +107,7 @@ function onScroll (pos) {
           <span class="text">随机播放全部</span>
         </div>
       </div>
-      <div class="filter"></div>
+      <div class="filter" :style="filterStyle"></div>
     </div>
     <!-- 歌单列表 -->
     <Scroll
@@ -103,7 +117,7 @@ function onScroll (pos) {
       @scroll="onScroll"
     >
       <div class="song-list-wrapper">
-        <SongList :songs="props.songs"></SongList>
+        <SongList :songs="songs"></SongList>
       </div>
     </Scroll>
   </div>

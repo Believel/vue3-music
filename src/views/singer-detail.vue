@@ -1,21 +1,52 @@
 <script setup>
-import { onBeforeMount, reactive, defineProps } from 'vue'
-import { useRoute } from 'vue-router'
+import { onBeforeMount, reactive, defineProps, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { getSingerDetail } from '@/service/singer'
 import { processSongs } from '@/service/song'
+import storage from 'good-storage'
+import { SINGER_KEY } from '@/assets/js/constant'
 import MusicList from '@/components/music-list/music-list'
 
+const route = useRoute()
+const router = useRouter()
 const data = reactive({
   songs: []
 })
 const props = defineProps({
   data: Object
 })
+
+const singerComputed = computed(() => {
+  let ret = null
+  if (props.data) {
+    ret = props.data
+  } else {
+    const singer = storage.session.get(SINGER_KEY)
+    if (singer && singer.mid === route.params.id) {
+      ret = singer
+    }
+  }
+  return ret
+})
+const pic = computed(() => {
+  const data = singerComputed.value
+  return data && data.pic
+})
+const title = computed(() => {
+  const data = singerComputed.value
+  return data && (data.name || data.title)
+})
 onBeforeMount(async () => {
-  const route = useRoute()
-  const result = await getSingerDetail({
-    mid: route.params.id
-  })
+  const data = singerComputed
+  // url 地址参数被直接在地址栏修改时
+  if (!data.value) {
+    const path = route.matched[0].path
+    router.push({
+      path
+    })
+    return
+  }
+  const result = await getSingerDetail(data)
   data.songs = await processSongs(result.songs)
 })
 
@@ -23,7 +54,12 @@ onBeforeMount(async () => {
 
 <template>
   <div class="singer-detail">
-    <music-list :songs="data.songs" :data="props.data"></music-list>
+    <music-list
+      :songs="data.songs"
+      :pic="pic"
+      :title="title"
+    >
+    </music-list>
   </div>
 </template>
 

@@ -1,6 +1,8 @@
 <script setup>
 import { reactive, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
+import storage from 'good-storage'
+import { SINGER_KEY } from '@/assets/js/constant'
 import { getSingerList } from '@/service/singer'
 import IndexList from '@/components/index-list/index-list'
 
@@ -15,6 +17,7 @@ onBeforeMount(async () => {
 })
 const selectSinger = (singer) => {
   data.selectedSinger = singer
+  storage.session.set(SINGER_KEY, singer)
   // 路由跳转歌手详情页
   router.push({
     path: `/singer/${singer.mid}`

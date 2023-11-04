@@ -13,7 +13,8 @@ const props = defineProps({
       return []
     }
   },
-  data: Object
+  pic: String,
+  title: String
 })
 const scrollY = ref(0)
 const maxTranslateY = ref(0)
@@ -46,7 +47,7 @@ const bgImageStyle = computed(() => {
     zIndex,
     paddingTop,
     height,
-    backgroundImage: `url(${props.data.pic})`,
+    backgroundImage: `url(${props.pic})`,
     transform: `scale(${scale})`
   }
 })
@@ -99,7 +100,7 @@ function onScroll (pos) {
     <div class="back" @click="goBack">
       <i class="icon-back"></i>
     </div>
-    <h1 class="title">{{data.name}}</h1>
+    <h1 class="title">{{title}}</h1>
     <div class="bg-image" :style="bgImageStyle" ref="bgImage">
       <div class="play-btn-wrapper" :style="playBtnStyle">
         <div class="play-btn">

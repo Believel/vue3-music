@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, reactive, defineProps, computed } from 'vue'
+import { onBeforeMount, reactive, defineProps, computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getSingerDetail } from '@/service/singer'
 import { processSongs } from '@/service/song'
@@ -12,6 +12,7 @@ const router = useRouter()
 const data = reactive({
   songs: []
 })
+const loading = ref(true)
 const props = defineProps({
   data: Object
 })
@@ -48,6 +49,7 @@ onBeforeMount(async () => {
   }
   const result = await getSingerDetail(singer)
   data.songs = await processSongs(result.songs)
+  loading.value = false
 })
 
 </script>
@@ -58,6 +60,7 @@ onBeforeMount(async () => {
       :songs="data.songs"
       :pic="pic"
       :title="title"
+      :loading="loading"
     >
     </music-list>
   </div>

@@ -14,7 +14,8 @@ const props = defineProps({
     }
   },
   pic: String,
-  title: String
+  title: String,
+  loading: Boolean
 })
 const scrollY = ref(0)
 const maxTranslateY = ref(0)
@@ -116,6 +117,7 @@ function onScroll (pos) {
       :style="scrollStyle"
       :probe-type="3"
       @scroll="onScroll"
+      v-loading="loading"
     >
       <div class="song-list-wrapper">
         <SongList :songs="songs"></SongList>

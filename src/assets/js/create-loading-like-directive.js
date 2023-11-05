@@ -11,6 +11,7 @@ export default function createLoadingLikeDirective (Comp) {
       const app = createApp(Comp)
       const instance = app.mount(document.createElement('div'))
       const name = Comp.name
+      // 动态定义一个对象，是为了防止多个组件作用与同一个页面上值被替换掉
       if (!el[name]) {
         el[name] = {}
       }

@@ -15,7 +15,11 @@ const props = defineProps({
   },
   pic: String,
   title: String,
-  loading: Boolean
+  loading: Boolean,
+  noResultText: {
+    type: String,
+    default: '抱歉，没有找到可播放的歌曲'
+  }
 })
 const scrollY = ref(0)
 const maxTranslateY = ref(0)
@@ -83,6 +87,10 @@ const filterStyle = computed(() => {
     backdropFilter: `blur(${blur}px)`
   }
 })
+
+const noResult = computed(() => {
+  return !props.loading && !props.songs.length
+})
 const router = useRouter()
 const goBack = () => {
   router.back()
@@ -118,6 +126,7 @@ function onScroll (pos) {
       :probe-type="3"
       @scroll="onScroll"
       v-loading="loading"
+      v-no-result:[noResultText]="noResult"
     >
       <div class="song-list-wrapper">
         <SongList :songs="songs"></SongList>

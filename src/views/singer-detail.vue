@@ -37,16 +37,16 @@ const title = computed(() => {
   return data && (data.name || data.title)
 })
 onBeforeMount(async () => {
-  const data = singerComputed
+  const singer = singerComputed.value
   // url 地址参数被直接在地址栏修改时
-  if (!data.value) {
+  if (!singer) {
     const path = route.matched[0].path
     router.push({
       path
     })
     return
   }
-  const result = await getSingerDetail(data)
+  const result = await getSingerDetail(singer)
   data.songs = await processSongs(result.songs)
 })
 

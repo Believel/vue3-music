@@ -30,6 +30,25 @@ function goBack () {
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
+      <div class="bottom">
+        <div class="operators">
+          <div class="icon i-left">
+            <i class="icon-sequence"></i>
+          </div>
+          <div class="icon i-left">
+            <i class="icon-prev"></i>
+          </div>
+          <div class="icon i-center">
+            <i class="icon-pause"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-next"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-favorite"></i>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -88,6 +107,41 @@ function goBack () {
           text-align: center;
           font-size: $font-size-medium;
           color: $color-text;
+        }
+      }
+      .bottom {
+        position: absolute;
+        bottom: 50px;
+        width: 100%;
+        .operators {
+          display: flex;
+          align-items: center;
+          .icon {
+            flex: 1;
+            color: $color-theme;
+            &.disable {
+              color: $color-theme-d;
+            }
+            i {
+              font-size: 30px;
+            }
+          }
+          .i-left {
+            text-align: right;
+          }
+          .i-center {
+            padding: 0 20px;
+            text-align: center;
+            i {
+              font-size: 40px;
+            }
+          }
+          .i-right {
+            text-align: left;
+          }
+          .icon-favorite {
+            color: $color-sub-theme;
+          }
         }
       }
     }

@@ -3,8 +3,11 @@ import { defineProps, computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Scroll from '@/components/base/scroll/scroll'
 import SongList from '@/components/base/song-list/song-list'
+import { usePlayStore } from '@/store/player'
 
 const RESERVED_HEIGHT = 40
+
+const store = usePlayStore()
 
 const props = defineProps({
   songs: {
@@ -103,6 +106,9 @@ onMounted(() => {
 function onScroll (pos) {
   scrollY.value = -pos.y
 }
+function random () {
+  store.randomPlay(props.songs)
+}
 </script>
 <template>
   <div class="music-list">
@@ -112,7 +118,7 @@ function onScroll (pos) {
     <h1 class="title">{{title}}</h1>
     <div class="bg-image" :style="bgImageStyle" ref="bgImage">
       <div class="play-btn-wrapper" :style="playBtnStyle">
-        <div class="play-btn">
+        <div class="play-btn" @click="random">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
         </div>

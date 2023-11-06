@@ -43,7 +43,7 @@ export const usePlayStore = defineStore('play', {
     },
     // 播放歌曲
     selectPlay (list, index) {
-      this.playMode(PLAY_MODE.sequence)
+      this.setPlayMode(PLAY_MODE.sequence)
       this.setSequenceList(list)
       this.setPlaylist(list)
       this.setPlayingState(true)
@@ -52,7 +52,7 @@ export const usePlayStore = defineStore('play', {
     },
     // 随机播放歌曲
     randomPlay (list) {
-      this.playMode(PLAY_MODE.random)
+      this.setPlayMode(PLAY_MODE.random)
       this.setSequenceList(list)
       this.setPlayingState(true)
       this.setFullScreen(true)

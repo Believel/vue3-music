@@ -4,19 +4,31 @@ import { usePlayStore } from '@/store/player'
 
 const store = usePlayStore()
 
+console.log(store)
+
 const currentSong = computed(() => store.currentSong)
 const playlist = computed(() => store.playlist)
+const fullScreen = computed(() => store.fullScreen)
+
+// methods
+function goBack () {
+  store.setFullScreen(false)
+}
 </script>
 
 <template>
   <div class="player" v-show="playlist.length">
     <!-- 全屏播放 -->
-    <div class="normal-player">
+    <div class="normal-player" v-show="fullScreen">
       <div class="background">
         <img :src="currentSong.pic">
       </div>
       <div class="top">
-        <i class="icon-back"></i>
+        <div class="back" @click="goBack">
+          <i class="icon-back"></i>
+        </div>
+        <h1 class="title">{{ currentSong.name }}</h1>
+        <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
     </div>
   </div>
@@ -61,6 +73,21 @@ const playlist = computed(() => store.playlist)
           font-size: $font-size-large-x;
           color: $color-theme;
           transform: rotate(-90deg);
+        }
+        .title {
+          width: 70%;
+          margin: 0 auto;
+          line-height: 40px;
+          text-align: center;
+          @include no-wrap();
+          font-size: $font-size-large;
+          color: $color-text;
+        }
+        .subtitle {
+          line-height: 20px;
+          text-align: center;
+          font-size: $font-size-medium;
+          color: $color-text;
         }
       }
     }

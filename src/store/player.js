@@ -15,7 +15,8 @@ export const usePlayStore = defineStore('play', {
     // 播放列表索引
     currentIndex: 0,
     // 是否全屏
-    fullScreen: true
+    fullScreen: true,
+    favoriteList: []
   }),
   getters: {
     currentSong: (state) => {
@@ -40,6 +41,9 @@ export const usePlayStore = defineStore('play', {
     },
     setFullScreen (fullScreen) {
       this.fullScreen = fullScreen
+    },
+    setFavoriteList (list) {
+      this.favoriteList = list
     },
     // 播放歌曲
     selectPlay (list, index) {

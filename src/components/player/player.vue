@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
 import useMode from './use-mode'
+import useFavorite from './use-favorite'
 import { PLAY_MODE } from '@/assets/js/constant'
 
 const store = usePlayStore()
@@ -18,6 +19,7 @@ const playing = computed(() => store.playing)
 const playMode = computed(() => store.playMode)
 
 const { modeIcon, changeMode } = useMode()
+const { getFavoriteIcon, toggleFavorite } = useFavorite()
 
 const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'
@@ -155,7 +157,7 @@ function end () {
             <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
-            <i class="icon-favorite"></i>
+            <i @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
           </div>
         </div>
       </div>

@@ -58,6 +58,20 @@ export const usePlayStore = defineStore('play', {
       this.setFullScreen(true)
       this.setPlaylist(shuffle(list))
       this.setCurrentIndex(0)
+    },
+    // 点击播放模式
+    changeMode (mode) {
+      const currentId = this.currentSong.id
+      if (mode === PLAY_MODE.random) {
+        this.setPlaylist(shuffle(this.sequenceList))
+      } else {
+        this.setPlaylist(this.sequenceList)
+      }
+      const index = this.playlist.findIndex(song => {
+        return song.id === currentId
+      })
+      this.setCurrentIndex(index)
+      this.setPlayMode(mode)
     }
   }
 })

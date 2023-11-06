@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
+import useMode from './use-mode'
+import { PLAY_MODE } from '@/assets/js/constant'
 
 const store = usePlayStore()
 
@@ -13,6 +15,9 @@ const playlist = computed(() => store.playlist)
 const fullScreen = computed(() => store.fullScreen)
 const currentIndex = computed(() => store.currentIndex)
 const playing = computed(() => store.playing)
+const playMode = computed(() => store.playMode)
+
+const { modeIcon, changeMode } = useMode()
 
 const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'
@@ -110,6 +115,15 @@ function error () {
 function updateTime (e) {
   currentTime.value = e.target.currentTime
 }
+
+function end () {
+  currentTime.value = 0
+  if (playMode.value === PLAY_MODE.loop) {
+    loop()
+  } else {
+    next()
+  }
+}
 </script>
 
 <template>
@@ -128,8 +142,8 @@ function updateTime (e) {
       </div>
       <div class="bottom">
         <div class="operators">
-          <div class="icon i-left">
-            <i class="icon-sequence"></i>
+          <div class="icon i-left" @click="changeMode">
+            <i :class="modeIcon"></i>
           </div>
           <div class="icon i-left" :class="disableCls">
             <i @click="prev" class="icon-prev"></i>
@@ -152,6 +166,7 @@ function updateTime (e) {
       @canplay="ready"
       @error="error"
       @timeupdate="updateTime"
+      @ended="end"
     >
     </audio>
   </div>

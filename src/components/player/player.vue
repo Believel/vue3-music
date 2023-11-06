@@ -1,18 +1,114 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
 
 const store = usePlayStore()
 
-console.log(store)
+const audioRef = ref(null)
+const songReady = ref(false)
+const currentTime = ref(0)
 
 const currentSong = computed(() => store.currentSong)
 const playlist = computed(() => store.playlist)
 const fullScreen = computed(() => store.fullScreen)
+const currentIndex = computed(() => store.currentIndex)
+const playing = computed(() => store.playing)
 
+const playIcon = computed(() => {
+  return playing.value ? 'icon-pause' : 'icon-play'
+})
+
+const disableCls = computed(() => {
+  return songReady.value ? '' : 'disable'
+})
+
+// watch
+watch(currentSong, (newSong) => {
+  if (!newSong.id || !newSong.url) {
+    return
+  }
+  songReady.value = false
+  const audioEL = audioRef.value
+  audioEL.src = newSong.url
+  audioEL.play()
+  store.setPlayingState(true)
+})
+
+watch(playing, (newPlaying) => {
+  if (!songReady.value) {
+    return
+  }
+  const audioEl = audioRef.value
+  if (newPlaying) {
+    audioEl.play()
+  } else {
+    audioEl.pause()
+  }
+})
 // methods
 function goBack () {
   store.setFullScreen(false)
+}
+function prev () {
+  const list = playlist.value
+  if (!songReady.value || !list.length) {
+    return
+  }
+  if (list.length === 1) {
+    loop()
+  } else {
+    let index = currentIndex.value - 1
+    if (index === -1) {
+      index = list.length - 1
+    }
+    store.setCurrentIndex(index)
+  }
+}
+
+function next () {
+  const list = playlist.value
+  if (!songReady.value || !list.length) {
+    return
+  }
+  if (list.length === 1) {
+    loop()
+  } else {
+    let index = currentIndex.value + 1
+    if (index === list.length) {
+      index = 0
+    }
+    store.setCurrentIndex(index)
+  }
+}
+
+function togglePlay () {
+  if (!songReady.value) {
+    return
+  }
+  store.setPlayingState(!playing.value)
+}
+
+function loop () {
+  const audioEl = audioRef.value
+  audioEl.currentTime = 0
+  audioEl.play()
+  store.setPlayingState(true)
+}
+function pause () {
+  store.setPlayingState(false)
+}
+function ready () {
+  if (songReady.value) {
+    return
+  }
+  songReady.value = true
+}
+
+function error () {
+  songReady.value = true
+}
+function updateTime (e) {
+  currentTime.value = e.target.currentTime
 }
 </script>
 
@@ -35,14 +131,14 @@ function goBack () {
           <div class="icon i-left">
             <i class="icon-sequence"></i>
           </div>
-          <div class="icon i-left">
-            <i class="icon-prev"></i>
+          <div class="icon i-left" :class="disableCls">
+            <i @click="prev" class="icon-prev"></i>
           </div>
-          <div class="icon i-center">
-            <i class="icon-pause"></i>
+          <div class="icon i-center" :class="disableCls">
+            <i @click="togglePlay" :class="playIcon"></i>
           </div>
-          <div class="icon i-right">
-            <i class="icon-next"></i>
+          <div class="icon i-right" :class="disableCls">
+            <i @click="next" class="icon-next"></i>
           </div>
           <div class="icon i-right">
             <i class="icon-favorite"></i>
@@ -50,6 +146,14 @@ function goBack () {
         </div>
       </div>
     </div>
+    <audio
+      ref="audioRef"
+      @pause="pause"
+      @canplay="ready"
+      @error="error"
+      @timeupdate="updateTime"
+    >
+    </audio>
   </div>
 </template>
 

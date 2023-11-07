@@ -3,13 +3,16 @@ import { computed, ref, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
+import ProgressBar from './progress-bar.vue'
 import { PLAY_MODE } from '@/assets/js/constant'
+import { formatTime } from '@/assets/js/util'
 
 const store = usePlayStore()
 
 const audioRef = ref(null)
 const songReady = ref(false)
 const currentTime = ref(0)
+let progressChanging = false
 
 const currentSong = computed(() => store.currentSong)
 const playlist = computed(() => store.playlist)
@@ -25,6 +28,9 @@ const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'
 })
 
+const progress = computed(() => {
+  return currentTime.value / currentSong.value.duration
+})
 const disableCls = computed(() => {
   return songReady.value ? '' : 'disable'
 })
@@ -115,7 +121,9 @@ function error () {
   songReady.value = true
 }
 function updateTime (e) {
-  currentTime.value = e.target.currentTime
+  if (!progressChanging) {
+    currentTime.value = e.target.currentTime
+  }
 }
 
 function end () {
@@ -124,6 +132,19 @@ function end () {
     loop()
   } else {
     next()
+  }
+}
+
+function onProgressChanging (progress) {
+  progressChanging = true
+  currentTime.value = currentSong.value.duration * progress
+}
+
+function onProgressChanged (progress) {
+  progressChanging = false
+  audioRef.value.currentTime = currentTime.value = currentSong.value.duration * progress
+  if (!playing.value) {
+    store.setPlayingState(true)
   }
 }
 </script>
@@ -143,6 +164,20 @@ function end () {
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="bottom">
+        <!-- 进度条 -->
+        <div class="progress-wrapper">
+          <span class="time time-l">{{ formatTime(currentTime) }}</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar
+              :progress="progress"
+              @progress-changing="onProgressChanging"
+              @progress-changed="onProgressChanged"
+            >
+            </progress-bar>
+          </div>
+          <span class="time time-r">{{ formatTime(currentSong.duration) }}</span>
+        </div>
+        <!-- 按钮操作区域 -->
         <div class="operators">
           <div class="icon i-left" @click="changeMode">
             <i :class="modeIcon"></i>
@@ -262,6 +297,29 @@ function end () {
           }
           .icon-favorite {
             color: $color-sub-theme;
+          }
+        }
+        .progress-wrapper {
+          display: flex;
+          align-items: center;
+          width: 80%;
+          margin: 0 auto;
+          padding: 10px 0;
+          .time {
+            color: $color-text;
+            font-size: $font-size-small;
+            flex: 0 0 40px;
+            line-height: 30px;
+            width: 40px;
+            &.time-l {
+              text-align: left;
+            }
+            &.time-r {
+              text-align: right;
+            }
+          }
+          .progress-bar-wrapper {
+            flex: 1;
           }
         }
       }

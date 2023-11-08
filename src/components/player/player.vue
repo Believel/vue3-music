@@ -6,6 +6,7 @@ import useFavorite from './use-favorite'
 import useCd from './use-cd'
 import useLyric from './use-lyric'
 import ProgressBar from './progress-bar.vue'
+import Scroll from '@/components/base/scroll/scroll'
 import { PLAY_MODE } from '@/assets/js/constant'
 import { formatTime } from '@/assets/js/util'
 
@@ -26,7 +27,7 @@ const playMode = computed(() => store.playMode)
 const { modeIcon, changeMode } = useMode()
 const { getFavoriteIcon, toggleFavorite } = useFavorite()
 const { cdCls, cdRef, cdImageRef } = useCd()
-const { currentLyric, currentLineNum } = useLyric({ currentTime, songReady })
+const { currentLyric, currentLineNum, pureMusicLyric, playingLyric, lyricScrollRef, lyricListRef, stopLyric, playLyric } = useLyric({ currentTime, songReady })
 
 const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'
@@ -58,8 +59,11 @@ watch(playing, (newPlaying) => {
   const audioEl = audioRef.value
   if (newPlaying) {
     audioEl.play()
+    playLyric()
   } else {
     audioEl.pause()
+    // 停止播放歌词
+    stopLyric()
   }
 })
 // methods
@@ -119,6 +123,7 @@ function ready () {
     return
   }
   songReady.value = true
+  playLyric()
 }
 
 function error () {
@@ -142,6 +147,8 @@ function end () {
 function onProgressChanging (progress) {
   progressChanging = true
   currentTime.value = currentSong.value.duration * progress
+  playLyric()
+  stopLyric()
 }
 
 function onProgressChanged (progress) {
@@ -150,6 +157,7 @@ function onProgressChanged (progress) {
   if (!playing.value) {
     store.setPlayingState(true)
   }
+  playLyric()
 }
 </script>
 
@@ -168,6 +176,7 @@ function onProgressChanged (progress) {
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
       <div class="middle">
+        <!-- CD -->
         <div class="middle-l">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
@@ -178,9 +187,28 @@ function onProgressChanged (progress) {
                 class="image">
             </div>
           </div>
+          <div class="playing-lyric-wrapper">
+            <div class="playing-lyric">{{ playingLyric }}</div>
+          </div>
         </div>
-        <div class="middle-r">
-        </div>
+        <!-- 歌词 -->
+        <Scroll class="middle-r" ref="lyricScrollRef">
+          <div class="lyric-wrapper">
+            <div v-if="currentLyric" ref="lyricListRef">
+              <p
+                class="text"
+                :class="{'current': currentLineNum === index}"
+                v-for="(line, index) in currentLyric.lines"
+                :key="line.num"
+              >
+                {{ line.txt }}
+              </p>
+            </div>
+            <div class="pure-music" v-show="pureMusicLyric">
+              <p>{{ pureMusicLyric }}</p>
+            </div>
+          </div>
+        </Scroll>
       </div>
       <div class="bottom">
         <!-- 进度条 -->
@@ -322,6 +350,45 @@ function onProgressChanged (progress) {
               .playing {
                 animation: rotate 20s linear infinite;
               }
+            }
+          }
+          .playing-lyric-wrapper {
+            width: 80%;
+            margin: 30px auto 0 auto;
+            overflow: hidden;
+            text-align: center;
+            .playing-lyric {
+              height: 20px;
+              line-height: 20px;
+              font-size: $font-size-medium;
+              color: $color-text-l;
+            }
+          }
+        }
+        .middle-r {
+          display: inline-block;
+          vertical-align: top;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          .lyric-wrapper {
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+            text-align: center;
+            .text {
+              line-height: 32px;
+              color: $color-text-l;
+              font-size: $font-size-medium;
+              &.current {
+                color: $color-text;
+              }
+            }
+            .pure-music {
+              padding-top: 50%;
+              line-height: 32px;
+              color: $color-text-l;
+              font-size: $font-size-medium;
             }
           }
         }

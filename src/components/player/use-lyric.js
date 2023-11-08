@@ -10,6 +10,11 @@ export default function useLyric ({ currentTime, songReady }) {
   const currentLineNum = ref(0)
   // 正在播放的歌词
   const playingLyric = ref(null)
+  // 没歌词时内容展示
+  const pureMusicLyric = ref('')
+
+  const lyricScrollRef = ref(null)
+  const lyricListRef = ref(null)
 
   const store = usePlayStore()
 
@@ -19,6 +24,12 @@ export default function useLyric ({ currentTime, songReady }) {
     if (!newSong.url || !newSong.id) {
       return
     }
+    // 重置歌词
+    stopLyric()
+    currentLyric.value = null
+    currentLineNum.value = 0
+    pureMusicLyric.value = ''
+    playingLyric.value = ''
 
     const lyric = await getLyric(newSong)
     store.addSongLyric({
@@ -29,12 +40,13 @@ export default function useLyric ({ currentTime, songReady }) {
       return
     }
     currentLyric.value = new Lyric(lyric, handleLyric)
-    console.log(currentLyric.value)
     const hasLyric = currentLyric.value.lines.length
     if (hasLyric) {
       if (songReady.value) {
         playLyric()
       }
+    } else {
+      playingLyric.value = pureMusicLyric.value = lyric.replace(/\[(\d{2}):(\d{2}):(\d{2})\]/g, '')
     }
   })
 
@@ -52,15 +64,28 @@ export default function useLyric ({ currentTime, songReady }) {
   }
 
   function handleLyric ({ lineNum, txt }) {
-    console.log(lineNum)
-    console.log(txt)
     currentLineNum.value = lineNum
     playingLyric.value = txt
+    const scrollComp = lyricScrollRef.value
+    const listEl = lyricListRef.value
+    if (!listEl) {
+      return
+    }
+    if (lineNum > 5) {
+      const lineEl = listEl.children[lineNum - 5]
+      scrollComp.scroll.scrollToElement(lineEl, 1000)
+    } else {
+      scrollComp.scroll.scrollTo(0, 0, 1000)
+    }
   }
   return {
     currentLyric,
     currentLineNum,
+    pureMusicLyric,
+    playingLyric,
     playLyric,
-    stopLyric
+    stopLyric,
+    lyricScrollRef,
+    lyricListRef
   }
 }

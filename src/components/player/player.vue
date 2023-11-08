@@ -5,6 +5,7 @@ import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import useCd from './use-cd'
 import useLyric from './use-lyric'
+import useMiddleInteractive from './use-middle-interactive'
 import ProgressBar from './progress-bar.vue'
 import Scroll from '@/components/base/scroll/scroll'
 import { PLAY_MODE } from '@/assets/js/constant'
@@ -28,6 +29,7 @@ const { modeIcon, changeMode } = useMode()
 const { getFavoriteIcon, toggleFavorite } = useFavorite()
 const { cdCls, cdRef, cdImageRef } = useCd()
 const { currentLyric, currentLineNum, pureMusicLyric, playingLyric, lyricScrollRef, lyricListRef, stopLyric, playLyric } = useLyric({ currentTime, songReady })
+const { currentShow, middleLStyle, middleRStyle, onMiddleTouchStart, onMiddleTouchMove, onMiddleTouchEnd } = useMiddleInteractive()
 
 const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'
@@ -175,9 +177,14 @@ function onProgressChanged (progress) {
         <h1 class="title">{{ currentSong.name }}</h1>
         <h2 class="subtitle">{{ currentSong.singer }}</h2>
       </div>
-      <div class="middle">
+      <div
+        class="middle"
+        @touchstart="onMiddleTouchStart"
+        @touchmove="onMiddleTouchMove"
+        @touchend="onMiddleTouchEnd"
+      >
         <!-- CD -->
-        <div class="middle-l">
+        <div class="middle-l" :style="middleLStyle">
           <div class="cd-wrapper">
             <div class="cd" ref="cdRef">
               <img
@@ -192,7 +199,7 @@ function onProgressChanged (progress) {
           </div>
         </div>
         <!-- 歌词 -->
-        <Scroll class="middle-r" ref="lyricScrollRef">
+        <Scroll class="middle-r" :style="middleRStyle" ref="lyricScrollRef">
           <div class="lyric-wrapper">
             <div v-if="currentLyric" ref="lyricListRef">
               <p
@@ -211,6 +218,10 @@ function onProgressChanged (progress) {
         </Scroll>
       </div>
       <div class="bottom">
+        <div class="dot-wrapper">
+          <span class="dot" :class="{'active': currentShow === 'cd'}"></span>
+          <span class="dot" :class="{'active': currentShow === 'lyric'}"></span>
+        </div>
         <!-- 进度条 -->
         <div class="progress-wrapper">
           <span class="time time-l">{{ formatTime(currentTime) }}</span>
@@ -397,6 +408,24 @@ function onProgressChanged (progress) {
         position: absolute;
         bottom: 50px;
         width: 100%;
+        .dot-wrapper {
+          text-align: center;
+          font-size: 0;
+          .dot {
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: $color-text-l;
+            &.active {
+              width: 20px;
+              border-radius: 5px;
+              background: $color-text-ll;
+            }
+          }
+        }
         .operators {
           display: flex;
           align-items: center;

@@ -1,5 +1,6 @@
 
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { usePlayStore } from '@/store/player'
 // 在滑动过程中
 // cd page  控制 opacity
 // lyric page 控制   offsetWidth
@@ -9,9 +10,28 @@ export default function useMiddleInteractive () {
   const middleLStyle = ref(null)
   const middleRStyle = ref(null)
 
-  const touch = {}
+  const store = usePlayStore()
+
+  const currentSong = computed(() => store.currentSong)
+
+  let touch = {}
+  const duration = 300
 
   let currentView = 'cd'
+
+  watch(currentSong, newSong => {
+    if (!newSong.id || !newSong.url) {
+      return
+    }
+    // 切换歌曲时，默认中间页还是展示 cd
+    if (currentShow.value !== 'cd') {
+      currentShow.value = 'cd'
+      middleLStyle.value = null
+      middleRStyle.value = null
+      touch = {}
+      currentView = 'cd'
+    }
+  })
 
   function onMiddleTouchStart (e) {
     touch.x = e.touches[0].pageX
@@ -68,7 +88,6 @@ export default function useMiddleInteractive () {
       offsetWidth = -window.innerWidth
       opacity = 0
     }
-    const duration = 300
     middleLStyle.value = {
       opacity,
       transitionDuration: `${duration}ms`

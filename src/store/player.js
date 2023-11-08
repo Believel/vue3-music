@@ -76,6 +76,17 @@ export const usePlayStore = defineStore('play', {
       })
       this.setCurrentIndex(index)
       this.setPlayMode(mode)
+    },
+    // 添加歌词
+    addSongLyric ({ song, lyric }) {
+      // 这里是利用对象的引用
+      // playlist 里面也是改变的
+      this.sequenceList.map(item => {
+        if (item.mid === song.mid) {
+          item.lyric = lyric
+        }
+        return item
+      })
     }
   }
 })

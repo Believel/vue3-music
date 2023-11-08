@@ -12,6 +12,11 @@ import '@/assets/scss/index.scss'
 // 创建一个 pinia 实例（根 store）
 const pinia = createPinia()
 
-createApp(App).use(pinia).use(router).use(lazyPlugin, {
+const app = createApp(App)
+
+// 开启 Vue.js 开发者工具
+app.config.devtools = true
+
+app.use(pinia).use(router).use(lazyPlugin, {
   loading: require('@/assets/images/default.png')
 }).directive('loading', loadingDirective).directive('no-result', noResultDiretive).mount('#app')

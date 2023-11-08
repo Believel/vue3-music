@@ -4,6 +4,7 @@ import { usePlayStore } from '@/store/player'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 import useCd from './use-cd'
+import useLyric from './use-lyric'
 import ProgressBar from './progress-bar.vue'
 import { PLAY_MODE } from '@/assets/js/constant'
 import { formatTime } from '@/assets/js/util'
@@ -25,6 +26,7 @@ const playMode = computed(() => store.playMode)
 const { modeIcon, changeMode } = useMode()
 const { getFavoriteIcon, toggleFavorite } = useFavorite()
 const { cdCls, cdRef, cdImageRef } = useCd()
+const { currentLyric, currentLineNum } = useLyric({ currentTime, songReady })
 
 const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'

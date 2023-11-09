@@ -8,6 +8,7 @@ import useLyric from './use-lyric'
 import useMiddleInteractive from './use-middle-interactive'
 import ProgressBar from './progress-bar.vue'
 import Scroll from '@/components/base/scroll/scroll'
+import MiniPlayer from './mini-player'
 import { PLAY_MODE } from '@/assets/js/constant'
 import { formatTime } from '@/assets/js/util'
 
@@ -255,6 +256,8 @@ function onProgressChanged (progress) {
         </div>
       </div>
     </div>
+    <MiniPlayer>
+    </MiniPlayer>
     <audio
       ref="audioRef"
       @pause="pause"

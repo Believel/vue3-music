@@ -256,7 +256,10 @@ function onProgressChanged (progress) {
         </div>
       </div>
     </div>
-    <MiniPlayer>
+    <MiniPlayer
+      :progress="progress"
+      :togglePlay="togglePlay"
+    >
     </MiniPlayer>
     <audio
       ref="audioRef"

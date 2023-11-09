@@ -1,13 +1,26 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, defineProps } from 'vue'
 import { usePlayStore } from '@/store/player'
 import useCd from './use-cd'
+import ProgressCircle from './progress-circle.vue'
 
+defineProps({
+  progress: {
+    type: Number,
+    default: 0
+  },
+  togglePlay: Function
+})
 const store = usePlayStore()
 const fullScreen = computed(() => store.fullScreen)
 const currentSong = computed(() => store.currentSong)
+const playing = computed(() => store.playing)
 
 const { cdCls, cdRef, cdImageRef } = useCd()
+
+const miniPlayIcon = computed(() => {
+  return playing.value ? 'icon-pause-mini' : 'icon-play-mini'
+})
 
 function showNormalPlayer () {
   store.setFullScreen(true)
@@ -21,6 +34,7 @@ function showNormalPlayer () {
     v-show="!fullScreen"
     @click="showNormalPlayer"
   >
+    <!-- cd -->
     <div class="cd-wrapper">
       <div class="cd" ref="cdRef">
         <img
@@ -31,6 +45,16 @@ function showNormalPlayer () {
           :class="cdCls"
         >
       </div>
+    </div>
+    <!-- player/pause btn -->
+    <div class="control">
+      <ProgressCircle :radius="32" :progress="progress">
+        <i
+          class="icon-mini"
+          :class="miniPlayIcon"
+          @click.stop="togglePlay"
+        ></i>
+      </ProgressCircle>
     </div>
   </div>
 </template>
@@ -60,6 +84,24 @@ function showNormalPlayer () {
           animation: rotate 10s linear infinite;
         }
       }
+    }
+  }
+  .control {
+    flex: 0 0 30px;
+    width: 30px;
+    padding: 0 10px;
+    .icon-playlist {
+      position: relative;
+      top: -2px;
+      font-size: 28px;
+      color: $color-theme-d;
+    }
+    .icon-mini {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: $color-theme-d;
+      font-size: 32px;
     }
   }
 }

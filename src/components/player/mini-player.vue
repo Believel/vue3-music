@@ -2,6 +2,7 @@
 import { computed, defineProps } from 'vue'
 import { usePlayStore } from '@/store/player'
 import useCd from './use-cd'
+import useMiniSlider from './use-mini-slider'
 import ProgressCircle from './progress-circle.vue'
 
 defineProps({
@@ -15,8 +16,10 @@ const store = usePlayStore()
 const fullScreen = computed(() => store.fullScreen)
 const currentSong = computed(() => store.currentSong)
 const playing = computed(() => store.playing)
+const playlist = computed(() => store.playlist)
 
 const { cdCls, cdRef, cdImageRef } = useCd()
+const { sliderWrapperRef } = useMiniSlider()
 
 const miniPlayIcon = computed(() => {
   return playing.value ? 'icon-pause-mini' : 'icon-play-mini'
@@ -44,6 +47,19 @@ function showNormalPlayer () {
           height="40"
           :class="cdCls"
         >
+      </div>
+    </div>
+    <!-- 手指滑动播放上或下首歌曲 -->
+    <div class="slider-wrapper" ref="sliderWrapperRef">
+      <div class="slider-group">
+        <div
+          class="slider-page"
+          v-for="song in playlist"
+          :key="song.id"
+        >
+          <h2 class="name">{{song.name}}</h2>
+          <p class="desc">{{song.singer}}</p>
+        </div>
       </div>
     </div>
     <!-- player/pause btn -->
@@ -82,6 +98,36 @@ function showNormalPlayer () {
         border-radius: 50%;
         &.playing {
           animation: rotate 10s linear infinite;
+        }
+      }
+    }
+  }
+  .slider-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    line-height: 20px;
+    overflow: hidden;
+    .slider-group {
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+      .slider-page {
+        display: inline-block;
+        width: 100%;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        .name {
+          margin-bottom: 2px;
+          @include no-wrap();
+          font-size: $font-size-medium;
+          color: $color-text;
+        }
+        .desc {
+          @include no-wrap();
+          font-size: $font-size-small;
+          color: $color-text-d;
         }
       }
     }

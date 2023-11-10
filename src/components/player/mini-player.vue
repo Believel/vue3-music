@@ -73,6 +73,10 @@ function showNormalPlayer () {
           ></i>
         </ProgressCircle>
       </div>
+      <!-- mini 播放列表按钮 -->
+      <div class="control">
+        <i class="icon-playlist"></i>
+      </div>
     </div>
   </transition>
 

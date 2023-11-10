@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>css3-animate</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      padding: 30px;
+    }
+    .box {
+      width: 200px;
+      height: 200px;
+      background: tomato;
+      position: relative;
+      overflow: hidden;
+    }
+    .box p {
+      position: absolute;
+      left: 0;
+      bottom: -35px;
+      width: 100%;
+      height: 35px;
+      line-height: 35px;
+      text-align: center;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      transition: bottom 0.5s;
+    }
+    .box:hover p {
+      bottom: 0;
+    }
+
+    @keyframes changeBox {
+      from {
+        width: 200px;
+        height: 200px;
+      }
+      to {
+        width: 400px;
+        height: 400px;
+      }
+    }
+    #aDiv a {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <p>坚持，加油，不放弃。</p>
+  </div>
+  <div id="aDiv"></div>
+  <script>
+    const aDiv = document.getElementById('aDiv')
+    for (let i = 0; i < 10; i++) {
+      const a = document.createElement('a')
+      a.text = i + 1
+      aDiv.appendChild(a)
+    }
+    aDiv.addEventListener('click', e => {
+      console.log(e.target)
+      const a = e.target
+      
+
+    })
+  </script>
+</body>
+</html>

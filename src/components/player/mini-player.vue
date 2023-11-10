@@ -32,47 +32,50 @@ function showNormalPlayer () {
 </script>
 
 <template>
-  <div
-    class="mini-player"
-    v-show="!fullScreen"
-    @click="showNormalPlayer"
-  >
-    <!-- cd -->
-    <div class="cd-wrapper">
-      <div class="cd" ref="cdRef">
-        <img
-          ref="cdImageRef"
-          :src="currentSong.pic"
-          width="40"
-          height="40"
-          :class="cdCls"
-        >
-      </div>
-    </div>
-    <!-- 手指滑动播放上或下首歌曲 -->
-    <div class="slider-wrapper" ref="sliderWrapperRef">
-      <div class="slider-group">
-        <div
-          class="slider-page"
-          v-for="song in playlist"
-          :key="song.id"
-        >
-          <h2 class="name">{{song.name}}</h2>
-          <p class="desc">{{song.singer}}</p>
+  <transition name="mini">
+    <div
+      class="mini-player"
+      v-show="!fullScreen"
+      @click="showNormalPlayer"
+    >
+      <!-- cd -->
+      <div class="cd-wrapper">
+        <div class="cd" ref="cdRef">
+          <img
+            ref="cdImageRef"
+            :src="currentSong.pic"
+            width="40"
+            height="40"
+            :class="cdCls"
+          >
         </div>
       </div>
+      <!-- 手指滑动播放上或下首歌曲 -->
+      <div class="slider-wrapper" ref="sliderWrapperRef">
+        <div class="slider-group">
+          <div
+            class="slider-page"
+            v-for="song in playlist"
+            :key="song.id"
+          >
+            <h2 class="name">{{song.name}}</h2>
+            <p class="desc">{{song.singer}}</p>
+          </div>
+        </div>
+      </div>
+      <!-- player/pause btn -->
+      <div class="control">
+        <ProgressCircle :radius="32" :progress="progress">
+          <i
+            class="icon-mini"
+            :class="miniPlayIcon"
+            @click.stop="togglePlay"
+          ></i>
+        </ProgressCircle>
+      </div>
     </div>
-    <!-- player/pause btn -->
-    <div class="control">
-      <ProgressCircle :radius="32" :progress="progress">
-        <i
-          class="icon-mini"
-          :class="miniPlayIcon"
-          @click.stop="togglePlay"
-        ></i>
-      </ProgressCircle>
-    </div>
-  </div>
+  </transition>
+
 </template>
 
 <style lang="scss" scoped>
@@ -150,5 +153,12 @@ function showNormalPlayer () {
       font-size: 32px;
     }
   }
+}
+.mini-enter-active, .mini-leave-active {
+  transition: all 0.6s cubic-bezier(0.45, 0, 0.55, 1);
+}
+.mini-enter-from, .mini-leave-to {
+  opacity: 0;
+  transform: translate3d(0, 100%, 0);
 }
 </style>

@@ -3,15 +3,37 @@ import { ref, computed, defineExpose, nextTick } from 'vue'
 import { usePlayStore } from '@/store/player'
 import Scroll from '@/components/base/scroll/scroll'
 import useMode from './use-mode'
+import useFavorite from './use-favorite'
 
 const visible = ref(false)
 const scrollRef = ref(null)
+const removing = ref(false)
 
 const store = usePlayStore()
 const playlist = computed(() => store.playlist)
 const sequenceList = computed(() => store.sequenceList)
+const currentSong = computed(() => store.currentSong)
 
 const { changeMode, modeIcon, modeText } = useMode()
+const { getFavoriteIcon, toggleFavorite } = useFavorite()
+
+function getCurrentIcon (song) {
+  if (song.id === currentSong.value.id) {
+    return 'icon-play'
+  }
+}
+
+function removeSong (song) {
+  if (removing.value) {
+    return
+  }
+  removing.value = true
+  store.removeSong(song)
+
+  setTimeout(() => {
+    removing.value = false
+  }, 300)
+}
 
 function refreshScroll () {
   scrollRef.value.scroll.refresh()
@@ -61,12 +83,16 @@ defineExpose({
                 v-for="song in sequenceList"
                 :key="song.id"
               >
-                <i class="current"></i>
+                <i class="current" :class="getCurrentIcon(song)"></i>
                 <span class="text">{{ song.name }}</span>
-                <span class="favorite">
-                  <i></i>
+                <span class="favorite" @click.stop="toggleFavorite(song)">
+                  <i :class="getFavoriteIcon(song)"></i>
                 </span>
-                <span class="delete">
+                <span
+                  class="delete"
+                  @click.stop="removeSong(song)"
+                  :class="{'disable': removing}"
+                >
                   <i class="icon-delete"></i>
                 </span>
               </li>

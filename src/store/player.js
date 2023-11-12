@@ -87,6 +87,27 @@ export const usePlayStore = defineStore('play', {
         }
         return item
       })
+    },
+    // 删除歌曲
+    removeSong (song) {
+      const sequenceList = this.sequenceList.slice()
+      const playlist = this.playlist.slice()
+
+      const sequenceIndex = findIndex(sequenceList, song)
+      const playIndex = findIndex(playlist, song)
+      if (sequenceIndex < 0 || playIndex < 0) {
+        return
+      }
+      sequenceList.splice(sequenceIndex, 1)
+      playlist.splice(playIndex, 1)
+      this.setPlaylist(playlist)
+      this.setSequenceList(sequenceList)
     }
   }
 })
+
+function findIndex (list, song) {
+  return list.findIndex((item) => {
+    return item.id === song.id
+  })
+}

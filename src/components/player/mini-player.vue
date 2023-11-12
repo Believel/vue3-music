@@ -1,9 +1,10 @@
 <script setup>
-import { computed, defineProps } from 'vue'
+import { computed, defineProps, ref } from 'vue'
 import { usePlayStore } from '@/store/player'
 import useCd from './use-cd'
 import useMiniSlider from './use-mini-slider'
 import ProgressCircle from './progress-circle.vue'
+import Playlist from './playlist.vue'
 
 defineProps({
   progress: {
@@ -12,6 +13,9 @@ defineProps({
   },
   togglePlay: Function
 })
+
+const playlistRef = ref(null)
+
 const store = usePlayStore()
 const fullScreen = computed(() => store.fullScreen)
 const currentSong = computed(() => store.currentSong)
@@ -27,6 +31,9 @@ const miniPlayIcon = computed(() => {
 
 function showNormalPlayer () {
   store.setFullScreen(true)
+}
+function showPlaylist () {
+  playlistRef.value.show()
 }
 
 </script>
@@ -75,8 +82,9 @@ function showNormalPlayer () {
       </div>
       <!-- mini 播放列表按钮 -->
       <div class="control">
-        <i class="icon-playlist"></i>
+        <i class="icon-playlist" @click.stop="showPlaylist"></i>
       </div>
+      <Playlist ref="playlistRef"></Playlist>
     </div>
   </transition>
 

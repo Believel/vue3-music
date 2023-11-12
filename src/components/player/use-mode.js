@@ -21,8 +21,18 @@ export default function useMode () {
     store.changeMode(mode)
   }
 
+  const modeText = computed(() => {
+    const playModeVal = playMode.value
+    return playModeVal === PLAY_MODE.sequence
+      ? '顺序播放'
+      : playModeVal === PLAY_MODE.random
+        ? '随机播放'
+        : '循环播放'
+  })
+
   return {
     modeIcon,
-    changeMode
+    changeMode,
+    modeText
   }
 }

@@ -1,20 +1,37 @@
 <script setup>
 import { reactive, onBeforeMount, computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Slider from '@/components/base/slider/slider'
 import Scroll from '@/components/wrap-scroll'
 import { getRecommend } from '@/service/recommend'
+import storage from 'good-storage'
+import { ALBUM_KEY } from '@/assets/js/constant'
 
 const data = reactive({
   sliders: [],
   albums: []
 })
 
+const router = useRouter()
 const title = ref('加载文案自己设定')
+const selectedAlbum = ref(null)
 
 // 计算属性
 const loading = computed(() => {
   return !data.sliders.length && !data.albums.length
 })
+
+function selectItem (album) {
+  selectedAlbum.value = album
+  cacheAlbum(album)
+  router.push({
+    path: `/recommend/${album.id}`
+  })
+}
+
+function cacheAlbum (album) {
+  storage.session.set(ALBUM_KEY, album)
+}
 
 onBeforeMount(async () => {
   const result = await getRecommend()
@@ -38,6 +55,7 @@ onBeforeMount(async () => {
               v-for="item in data.albums"
               class="item"
               :key="item.id"
+              @click="selectItem(item)"
             >
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.pic" />
@@ -55,6 +73,11 @@ onBeforeMount(async () => {
         </div>
       </div>
     </Scroll>
+    <router-view v-slot="{ Component }">
+      <transition appear name="slide">
+        <component :is="Component" :data="selectedAlbum"></component>
+      </transition>
+    </router-view>
   </div>
 </template>
 <style lang="scss" scoped>

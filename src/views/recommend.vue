@@ -1,7 +1,7 @@
 <script setup>
 import { reactive, onBeforeMount, computed, ref } from 'vue'
 import Slider from '@/components/base/slider/slider'
-import Scroll from '@/components/base/scroll/scroll'
+import Scroll from '@/components/wrap-scroll'
 import { getRecommend } from '@/service/recommend'
 
 const data = reactive({

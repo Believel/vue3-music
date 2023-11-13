@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps, computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import Scroll from '@/components/base/scroll/scroll'
+import Scroll from '@/components/wrap-scroll'
 import SongList from '@/components/base/song-list/song-list'
 import { usePlayStore } from '@/store/player'
 
@@ -24,6 +24,7 @@ const props = defineProps({
     default: '抱歉，没有找到可播放的歌曲'
   }
 })
+const playlist = computed(() => store.playlist)
 const scrollY = ref(0)
 const maxTranslateY = ref(0)
 // 背景图片高度
@@ -70,7 +71,7 @@ const playBtnStyle = computed(() => {
 })
 // 歌手列表样式
 const scrollStyle = computed(() => {
-  const bottom = props.songs.length ? '60px' : 0
+  const bottom = playlist.value.length ? '60px' : 0
   return {
     top: `${imageHeight.value}px`,
     bottom

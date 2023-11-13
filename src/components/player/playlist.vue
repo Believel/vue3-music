@@ -2,6 +2,7 @@
 import { ref, computed, defineExpose, nextTick, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
 import Scroll from '@/components/base/scroll/scroll'
+import Confirm from '@/components/base/confirm/confirm'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 
@@ -9,6 +10,7 @@ const visible = ref(false)
 const scrollRef = ref(null)
 const removing = ref(false)
 const listRef = ref(null)
+const confirmRef = ref(null)
 
 const store = usePlayStore()
 const playlist = computed(() => store.playlist)
@@ -78,6 +80,15 @@ function hide () {
   visible.value = false
 }
 
+function showConfirm () {
+  confirmRef.value.show()
+}
+
+function clear () {
+  store.clearSongList()
+  hide()
+}
+
 defineExpose({
   show
 })
@@ -100,6 +111,9 @@ defineExpose({
               >
               </i>
               <span class="text">{{ modeText }}</span>
+              <span class="clear" @click="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
             </h1>
           </div>
           <Scroll
@@ -128,7 +142,17 @@ defineExpose({
               </li>
             </transition-group>
           </Scroll>
+          <div class="list-fooer" @click="hide">
+            <span>关闭</span>
+          </div>
         </div>
+        <Confirm
+          ref="confirmRef"
+          text="是否清空播放列表"
+          confirm-btn-text="清空"
+          @confirm="clear"
+        >
+        </Confirm>
       </div>
     </transition>
   </teleport>
@@ -178,6 +202,13 @@ defineExpose({
             font-size: $font-size-medium;
             color: $color-text-l;
           }
+          .clear {
+            @include extend-click();
+            .icon-clear {
+              font-size: $font-size-medium;
+              color: $color-text-d;
+            }
+          }
         }
       }
       .list-content {
@@ -219,6 +250,13 @@ defineExpose({
             }
           }
         }
+      }
+      .list-fooer {
+        text-align: center;
+        line-height: 50px;
+        background: $color-background;
+        font-size: $font-size-medium-x;
+        color: $color-text-l
       }
     }
   }

@@ -112,6 +112,13 @@ export const usePlayStore = defineStore('play', {
       if (!playlist.length) {
         this.setPlayingState(false)
       }
+    },
+    // 清空歌曲列表
+    clearSongList () {
+      this.setSequenceList([])
+      this.setPlaylist([])
+      this.setCurrentIndex(0)
+      this.setPlayingState(false)
     }
   }
 })

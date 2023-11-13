@@ -100,8 +100,18 @@ export const usePlayStore = defineStore('play', {
       }
       sequenceList.splice(sequenceIndex, 1)
       playlist.splice(playIndex, 1)
+
+      let currentIndex = this.currentIndex
+      if (playIndex < currentIndex || currentIndex === playIndex.length) {
+        currentIndex--
+      }
+
       this.setPlaylist(playlist)
       this.setSequenceList(sequenceList)
+      this.setCurrentIndex(currentIndex)
+      if (!playlist.length) {
+        this.setPlayingState(false)
+      }
     }
   }
 })

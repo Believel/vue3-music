@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, defineExpose, nextTick } from 'vue'
+import { ref, computed, defineExpose, nextTick, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
 import Scroll from '@/components/base/scroll/scroll'
 import useMode from './use-mode'
@@ -8,6 +8,7 @@ import useFavorite from './use-favorite'
 const visible = ref(false)
 const scrollRef = ref(null)
 const removing = ref(false)
+const listRef = ref(null)
 
 const store = usePlayStore()
 const playlist = computed(() => store.playlist)
@@ -17,10 +18,27 @@ const currentSong = computed(() => store.currentSong)
 const { changeMode, modeIcon, modeText } = useMode()
 const { getFavoriteIcon, toggleFavorite } = useFavorite()
 
+// 进入页面列表就要滚动到当前项
+watch(currentSong, async newSong => {
+  if (!visible.value || !newSong.id) {
+    return
+  }
+  await nextTick()
+  scrollToCurrent()
+})
+
 function getCurrentIcon (song) {
   if (song.id === currentSong.value.id) {
     return 'icon-play'
   }
+}
+
+function selectItem (song) {
+  const index = playlist.value.findIndex(item => {
+    return song.id === item.id
+  })
+  store.setCurrentIndex(index)
+  store.setPlayingState(true)
 }
 
 function removeSong (song) {
@@ -39,10 +57,21 @@ function refreshScroll () {
   scrollRef.value.scroll.refresh()
 }
 
+function scrollToCurrent () {
+  const index = sequenceList.value.findIndex(song => {
+    return currentSong.value.id === song.id
+  })
+  if (index === -1) {
+    return
+  }
+  const target = listRef.value.$el.children[index]
+  scrollRef.value.scroll.scrollToElement(target, 300)
+}
 async function show () {
   visible.value = true
   await nextTick()
   refreshScroll()
+  scrollToCurrent()
 }
 
 function hide () {
@@ -77,11 +106,12 @@ defineExpose({
             class="list-content"
             ref="scrollRef"
           >
-            <ul>
+            <transition-group name="list" tag="ul" ref="listRef">
               <li
                 class="item"
                 v-for="song in sequenceList"
                 :key="song.id"
+                @click="selectItem(song)"
               >
                 <i class="current" :class="getCurrentIcon(song)"></i>
                 <span class="text">{{ song.name }}</span>
@@ -96,7 +126,7 @@ defineExpose({
                   <i class="icon-delete"></i>
                 </span>
               </li>
-            </ul>
+            </transition-group>
           </Scroll>
         </div>
       </div>

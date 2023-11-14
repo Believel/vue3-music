@@ -57,3 +57,55 @@ onUnmounted(() => {
 ```
 8. Teleport
   * `<teleport></teleport>` 是一个内置组件，它可以将一个组件内部的一部分模版”传送“到该组件的DOM结构外层的位置去
+9. 组件 `v-model`
+  * 组件定义
+  ```js
+  // search-input.vue
+  <script setup>
+  import { computed, defineProps, defineEmits } from 'vue'
+
+    const props = defineProps({
+      modelValue: String
+    })
+
+    const emit = defineEmits(['update:modelValue'])
+
+    const query = computed({
+      get () {
+        return props.modelValue
+      },
+      set (value) {
+        emit('update:modelValue', value)
+      }
+
+    })
+
+    </script>
+
+    <template>
+      <div class="search-input">
+        <input
+          class="input-inner"
+          v-model="query"
+        />
+      </div>
+    </template>
+  ```
+  * 组件使用
+  ```js
+  <script setup>
+  import { ref } from 'vue'
+  import SearchInput from '@/components/search/search-input'
+
+  const query = ref('')
+  </script>
+  <template>
+    <div class="search">
+      <div class="search-input-wrapper">
+        <SearchInput v-model="query"></SearchInput>
+      </div>
+    </div>
+  </template>
+
+  ```
+

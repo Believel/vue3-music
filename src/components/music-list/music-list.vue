@@ -110,6 +110,10 @@ function onScroll (pos) {
 function random () {
   store.randomPlay(props.songs)
 }
+
+function selectItem ({ index }) {
+  store.selectPlay(props.songs, index)
+}
 </script>
 <template>
   <div class="music-list">
@@ -136,7 +140,7 @@ function random () {
       v-no-result:[noResultText]="noResult"
     >
       <div class="song-list-wrapper">
-        <SongList :songs="songs"></SongList>
+        <SongList :songs="songs" @select="selectItem"></SongList>
       </div>
     </Scroll>
   </div>

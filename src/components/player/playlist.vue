@@ -3,6 +3,7 @@ import { ref, computed, defineExpose, nextTick, watch } from 'vue'
 import { usePlayStore } from '@/store/player'
 import Scroll from '@/components/base/scroll/scroll'
 import Confirm from '@/components/base/confirm/confirm'
+import AddSong from '@/components/add-song/add-song'
 import useMode from './use-mode'
 import useFavorite from './use-favorite'
 
@@ -11,6 +12,7 @@ const scrollRef = ref(null)
 const removing = ref(false)
 const listRef = ref(null)
 const confirmRef = ref(null)
+const addSongRef = ref(null)
 
 const store = usePlayStore()
 const playlist = computed(() => store.playlist)
@@ -89,6 +91,10 @@ function clear () {
   hide()
 }
 
+function showAddSong () {
+  addSongRef.value.show()
+}
+
 defineExpose({
   show
 })
@@ -142,6 +148,12 @@ defineExpose({
               </li>
             </transition-group>
           </Scroll>
+          <div class="list-add">
+            <div class="add" @click="showAddSong">
+              <i class="icon-add"></i>
+              <span class="text">添加歌曲到队列</span>
+            </div>
+          </div>
           <div class="list-fooer" @click="hide">
             <span>关闭</span>
           </div>
@@ -153,6 +165,7 @@ defineExpose({
           @confirm="clear"
         >
         </Confirm>
+        <AddSong ref="addSongRef"></AddSong>
       </div>
     </transition>
   </teleport>
@@ -248,6 +261,24 @@ defineExpose({
             &.disable {
               color: $color-theme-d;
             }
+          }
+        }
+      }
+      .list-add {
+        width: 140px;
+        margin: 20px auto 30px auto;
+        .add {
+          display: flex;
+          padding: 8px 16px;
+          border: 1px solid $color-text-l;
+          border-radius: 100px;
+          color: $color-text-l;
+          .icon-add {
+            margin-right: 5px;
+            font-size: $font-size-small-s;
+          }
+          .text {
+            font-size: $font-size-small;
           }
         }
       }

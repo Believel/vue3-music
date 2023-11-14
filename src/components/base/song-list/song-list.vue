@@ -1,8 +1,5 @@
 <script setup>
-import { defineProps } from 'vue'
-import { usePlayStore } from '@/store/player'
-
-const store = usePlayStore()
+import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   songs: {
@@ -13,11 +10,13 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['select'])
+
 function getDesc (song) {
   return `${song.singer}.${song.album}`
 }
-function selectItem (index) {
-  store.selectPlay(props.songs, index)
+function selectItem (song, index) {
+  emit('select', { song, index })
 }
 </script>
 <template>
@@ -26,7 +25,7 @@ function selectItem (index) {
       class="item"
       v-for="(song, index) in props.songs"
       :key="song.id"
-      @click="selectItem(index)"
+      @click="selectItem(song, index)"
     >
     <!-- <div class="rank">
       <span>{{ index + 1 }}</span>

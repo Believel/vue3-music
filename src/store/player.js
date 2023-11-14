@@ -16,7 +16,10 @@ export const usePlayStore = defineStore('play', {
     currentIndex: 0,
     // 是否全屏
     fullScreen: true,
-    favoriteList: []
+    // 收藏歌曲列表
+    favoriteList: [],
+    // 播放历史列表
+    playHistory: []
   }),
   getters: {
     currentSong: (state) => {
@@ -44,6 +47,9 @@ export const usePlayStore = defineStore('play', {
     },
     setFavoriteList (list) {
       this.favoriteList = list
+    },
+    setPlayHistory (songs) {
+      this.playHistory = songs
     },
     // 播放歌曲
     selectPlay (list, index) {
@@ -112,6 +118,31 @@ export const usePlayStore = defineStore('play', {
       if (!playlist.length) {
         this.setPlayingState(false)
       }
+    },
+    // 添加歌曲
+    addSong (song) {
+      const playlist = this.playlist.slice()
+      const sequenceList = this.sequenceList.slice()
+      let currentIndex = this.currentIndex
+      const playIndex = findIndex(playlist, song)
+
+      if (playIndex > -1) {
+        currentIndex = playIndex
+      } else {
+        playlist.push(song)
+        currentIndex = playlist.length - 1
+      }
+
+      const sequenceIndex = findIndex(sequenceList, song)
+      if (sequenceIndex === -1) {
+        sequenceList.push(song)
+      }
+
+      this.setSequenceList(sequenceList)
+      this.setPlaylist(playlist)
+      this.setCurrentIndex(currentIndex)
+      this.setPlayingState(true)
+      this.setFullScreen(true)
     },
     // 清空歌曲列表
     clearSongList () {

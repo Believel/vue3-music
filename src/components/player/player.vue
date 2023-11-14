@@ -7,6 +7,7 @@ import useCd from './use-cd'
 import useLyric from './use-lyric'
 import useMiddleInteractive from './use-middle-interactive'
 import useAnimate from './use-animate'
+import usePlayHistory from './use-play-history'
 import ProgressBar from './progress-bar.vue'
 import Scroll from '@/components/base/scroll/scroll'
 import MiniPlayer from './mini-player'
@@ -33,6 +34,7 @@ const { cdCls, cdRef, cdImageRef } = useCd()
 const { currentLyric, currentLineNum, pureMusicLyric, playingLyric, lyricScrollRef, lyricListRef, stopLyric, playLyric } = useLyric({ currentTime, songReady })
 const { currentShow, middleLStyle, middleRStyle, onMiddleTouchStart, onMiddleTouchMove, onMiddleTouchEnd } = useMiddleInteractive()
 const { cdWrapperRef, enter, afterEnter, leave, afterLeave } = useAnimate()
+const { savePlay } = usePlayHistory()
 
 const playIcon = computed(() => {
   return playing.value ? 'icon-pause' : 'icon-play'
@@ -128,6 +130,7 @@ function ready () {
     return
   }
   songReady.value = true
+  savePlay(currentSong.value)
   playLyric()
 }
 

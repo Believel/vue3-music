@@ -14,6 +14,12 @@ const emit = defineEmits(['update:modelValue'])
 
 const query = ref(props.modelValue)
 
+// 监听外部传来的 query
+watch(() => props.modelValue, (newVal) => {
+  query.value = newVal
+})
+
+// 监听内部 query 变化值
 watch(() => query.value, debounce(300, (newQuery) => {
   emit('update:modelValue', newQuery.trim())
 }))

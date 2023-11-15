@@ -21,6 +21,16 @@ const viewStyle = computed(() => {
   <Header></Header>
   <Tab></Tab>
   <router-view :style="viewStyle"></router-view>
+  <!-- 过渡动效 -->
+  <router-view
+    :style="viewStyle"
+    name="user"
+    v-slot="{ Component }"
+  >
+    <transition appear name="slide">
+      <component :is="Component"/>
+    </transition>
+  </router-view>
   <Player></Player>
 </template>
 <style lang="scss">

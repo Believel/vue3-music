@@ -109,6 +109,62 @@ onUnmounted(() => {
 
   ```
 
+# 服务器部署总结
+> 自己购买的阿里云服务器，操作系统是`CentOS 8.5`
+
+1. 安装服务器上需要的软件：`node`、`git`、`pm2`、`nginx`
+2. 服务器管理控制台开放需要的端口：我这里开放的是`9000`端口
+3. 用`nginx`来设置后端代理
+  * 进入主配置文件`/etc/nginx/nginx.conf`
+  ```js
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  _;
+        root         /usr/share/nginx/html;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        location / {
+        }
+        <!-- ++++++++++++  start +++++++++++++++ -->
+        location /music/  {
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+                proxy_set_header X-Nginx-Proxy true;
+                proxy_pass http://127.0.0.1:9000/;
+        }
+      <!-- ++++++++++++++ end ++++++++++++++++++++++ -->
+  }
+  ```
+  这里的意思是在主配置文件中，当我们访问`域名:80/music/`时会代理到`域名:9000/`上，这里的`域名:9000/`地址就是我们项目中要部署的地址
+
+4. 项目中需要修改的地方
+  * 4.1 前端 Vue3 项目
+  ```js
+  // vue.config.js
+    publicPath: process.env.NODE_ENV === 'production' ? '/music/' : '/'
+  ```
+  * 4.2 前端访问接口地址修改
+  ```js
+  // service/base.js
+  const baseURL = process.env.NODE_ENV === 'production' ? 'http://47.109.78.127/music/' : '/'
+  ```
+  * 4.3 增加打包及发布命令
+  ```js
+  // package.json
+  "deploy": "yarn run build && pm2 start backend/prod.server.js"
+  ```
+5. 用法
+  5.1 在服务器上下载了项目`/usr/xxx`之后，进入项目文件夹然后运行
+  ```js
+  yarn
+  npm run deploy
+  ```
+
+
 # 总结
 
 ![组件](./组件.png)

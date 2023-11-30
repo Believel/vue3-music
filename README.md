@@ -31,4 +31,4 @@ http://47.109.78.127/music/
 
 ### 知识点记录
 
-[note]('./note/note.md')
+[note](https://raw.githubusercontent.com/Believel/MarkdownPhotos/master/vuecli3.0/note.md)
